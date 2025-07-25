@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTF Lab: Find the Hidden Flags</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .fira-code {
+            font-family: 'Fira Code', monospace;
+        }
+        .glow-shadow {
+            box-shadow: 0 0 15px rgba(76, 29, 149, 0.5), 0 0 5px rgba(76, 29, 149, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen">
+
+    <!-- 
+        Welcome, student! The source code is often the first place an attacker looks.
+        Sometimes developers leave comments behind that can reveal secrets.
+
+        🚩 Flag #1: flag{hTmL_c0mm3nTs_Ar3_n0t_s3cr3t}
+    -->
+
+    <div class="w-full max-w-2xl mx-auto p-8 bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-indigo-400 mb-4">Web Security CTF Lab</h1>
+        <p class="text-gray-400 mb-6">
+            Your mission, should you choose to accept it, is to find all the hidden flags on this page.
+            You will need to use your browser's developer tools (F12 or Ctrl+Shift+I).
+        </p>
+        <p class="text-gray-400 mb-8">
+            Inspect everything: the page source, network requests, cookies, and console logs. Good luck!
+        </p>
+
+        <div class="bg-gray-900 p-6 rounded-lg border border-gray-700">
+            <h2 class="text-xl font-semibold text-white mb-4">Your Progress</h2>
+            <p class="text-gray-400 mb-6">Click the button below to trigger an important event. Make sure you're watching the developer tools when you do!</p>
+            <button id="actionButton" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-all duration-300 transform hover:scale-105 glow-shadow">
+                Check for Clues
+            </button>
+        </div>
+
+        <div id="messageBox" class="fixed top-5 right-5 bg-green-500 text-white p-4 rounded-lg shadow-lg opacity-0 transition-opacity duration-500">
+            Message sent to the console!
+        </div>
+    </div>
+
+    <script>
+        // --- Lab Setup ---
+
+        // When the page loads, we'll set a cookie. Cookies are used to store information
+        // on the user's browser. They are sent with every request to the server.
+        // Sometimes, they contain sensitive information that shouldn't be there.
+        // 🚩 Flag #2 is hidden in a cookie. Can you find it in the 'Storage' or 'Application' tab?
+        document.cookie = "user_session=flag{c00k1e_m0nst3r_h3r3}; path=/; SameSite=Lax";
+        
+        // This is just a decoy cookie to make things a little more interesting.
+        document.cookie = "user_preference=theme:dark; path=/; SameSite=Lax";
+
+        // Let's define a variable. It's not used anywhere, but if someone inspects the script...
+        // they might just find what they are looking for.
+        // 🚩 Flag #4: The Final Flag!
+        const aVerySecretVariable = "flag{j4v4scr1pt_c4n_h1d3_s3cr3ts_t00}";
+
+
+        // --- Interactive Part ---
+
+        const actionButton = document.getElementById('actionButton');
+        const messageBox = document.getElementById('messageBox');
+
+        actionButton.addEventListener('click', () => {
+            // The browser console is a powerful tool for developers, but it can also leak information.
+            // We are logging a message here. This message is your next clue.
+            // 🚩 Flag #3 is in the log message below.
+            console.log("A request has been sent. Check the 'Network' tab. The request itself might fail, but its headers contain a clue. The flag is: flag{c0ns0le_l0gs_c4n_b3_tr34ch3r0us}");
+
+            // Show a user-friendly message on the screen
+            messageBox.style.opacity = '1';
+            setTimeout(() => {
+                messageBox.style.opacity = '0';
+            }, 3000);
+
+            // We will now make a "fetch" request. This simulates an API call.
+            // This request will appear in the "Network" tab of the developer tools.
+            // Even if the request fails, you can still inspect its details, including the headers.
+            // We've added a custom *request* header. Look for it! It contains a hint for the final flag.
+            fetch('/api/secret-data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Custom-Hint': 'The final flag is hidden as a variable inside the main script file.'
+                },
+                body: JSON.stringify({ query: "Give me the secret" })
+            }).catch(err => {
+                // We expect this to fail, as the API endpoint doesn't exist.
+                // The goal is for the student to see the request being made.
+            });
+        });
+
+    </script>
+</body>
+</html>
