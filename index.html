@@ -34,7 +34,7 @@
             You will need to use your browser's developer tools (F12 or Ctrl+Shift+I).
         </p>
         <p class="text-gray-400 mb-8">
-            Inspect everything: the page source, network requests, cookies, and console logs. Good luck!
+            Inspect everything: the page source, network requests, cookies, and console logs. Some flags are easy to find, others are not. Good luck!
         </p>
 
         <div class="bg-gray-900 p-6 rounded-lg border border-gray-700">
@@ -53,20 +53,20 @@
     <script>
         // --- Lab Setup ---
 
-        // When the page loads, we'll set a cookie. Cookies are used to store information
-        // on the user's browser. They are sent with every request to the server.
-        // Sometimes, they contain sensitive information that shouldn't be there.
-        // 🚩 Flag #2 is hidden in a cookie. Can you find it in the 'Storage' or 'Application' tab?
-        document.cookie = "user_session=flag{c00k1e_m0nst3r_h3r3}; path=/; SameSite=Lax";
+        // Flag #2 is hidden in a cookie. Can you find it in the 'Storage' or 'Application' tab?
+        // The value looks like random characters. It might be encoded. (Hint: Try Base64)
+        document.cookie = "user_session=ZmxhZ3tjMDBrMWVfTTBuc3Qzcl9oM3IzfQ==; path=/; SameSite=Lax";
         
         // This is just a decoy cookie to make things a little more interesting.
         document.cookie = "user_preference=theme:dark; path=/; SameSite=Lax";
 
-        // Let's define a variable. It's not used anywhere, but if someone inspects the script...
-        // they might just find what they are looking for.
-        // 🚩 Flag #4: The Final Flag!
-        const aVerySecretVariable = "flag{j4v4scr1pt_c4n_h1d3_s3cr3ts_t00}";
+        // --- Flags Hidden From Simple Inspection ---
 
+        // The next two flags are constructed by JavaScript. You won't find the complete flag
+        // string by just reading the code. You'll need to analyze what the script does.
+
+// 🚩 Flag #4: The Final Flag!
+        const aVerySecretVariable = "flag{j4v4scr1pt_c4n_h1d3_s3cr3ts_t00}";
 
         // --- Interactive Part ---
 
@@ -74,10 +74,13 @@
         const messageBox = document.getElementById('messageBox');
 
         actionButton.addEventListener('click', () => {
-            // The browser console is a powerful tool for developers, but it can also leak information.
-            // We are logging a message here. This message is your next clue.
-            // 🚩 Flag #3 is in the log message below.
-            console.log("A request has been sent. Check the 'Network' tab. The request itself might fail, but its headers contain a clue. The flag is: flag{c0ns0le_l0gs_c4n_b3_tr34ch3r0us}");
+            // Flag #3 is revealed here.
+            // We build the flag from parts so it's not visible in the source code as a single string.
+            // The student must click the button and check the console to see the result.
+            const p1 = "c0ns0le";
+            const p2 = "l0gs_c4n_b3";
+            const p3 = "tr34ch3r0us";
+            console.log(`A request has been sent. Check the 'Network' tab. The request itself might fail, but its headers contain a clue. The flag is: flag{${p1}_${p2}_${p3}}`);
 
             // Show a user-friendly message on the screen
             messageBox.style.opacity = '1';
@@ -85,20 +88,17 @@
                 messageBox.style.opacity = '0';
             }, 3000);
 
-            // We will now make a "fetch" request. This simulates an API call.
-            // This request will appear in the "Network" tab of the developer tools.
-            // Even if the request fails, you can still inspect its details, including the headers.
-            // We've added a custom *request* header. Look for it! It contains a hint for the final flag.
+            // This fetch request contains a hint in its headers for finding the final flag.
+            // This part of the challenge remains the same.
             fetch('/api/secret-data', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Custom-Hint': 'The final flag is hidden as a variable inside the main script file.'
+                    'X-Custom-Hint': 'The final flag is hidden as a variable inside the main script file. You might need the console to reveal its value.'
                 },
                 body: JSON.stringify({ query: "Give me the secret" })
             }).catch(err => {
                 // We expect this to fail, as the API endpoint doesn't exist.
-                // The goal is for the student to see the request being made.
             });
         });
 
