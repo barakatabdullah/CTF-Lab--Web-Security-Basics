@@ -1,23 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CTF Lab: Find the Hidden Flags</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Fira+Code:wght@400;600&display=swap"
+        rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
         }
+
         .fira-code {
             font-family: 'Fira Code', monospace;
         }
+
         .glow-shadow {
             box-shadow: 0 0 15px rgba(76, 29, 149, 0.5), 0 0 5px rgba(76, 29, 149, 0.8);
         }
     </style>
 </head>
+
 <body class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen">
 
     <!-- 
@@ -34,18 +40,22 @@
             You will need to use your browser's developer tools (F12 or Ctrl+Shift+I).
         </p>
         <p class="text-gray-400 mb-8">
-            Inspect everything: the page source, network requests, cookies, and console logs. Some flags are easy to find, others are not. Good luck!
+            Inspect everything: the page source, network requests, cookies, and console logs. Some flags are easy to
+            find, others are not. Good luck!
         </p>
 
         <div class="bg-gray-900 p-6 rounded-lg border border-gray-700">
             <h2 class="text-xl font-semibold text-white mb-4">Your Progress</h2>
-            <p class="text-gray-400 mb-6">Click the button below to trigger an important event. Make sure you're watching the developer tools when you do!</p>
-            <button id="actionButton" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-all duration-300 transform hover:scale-105 glow-shadow">
+            <p class="text-gray-400 mb-6">Click the button below to trigger an important event. Make sure you're
+                watching the developer tools when you do!</p>
+            <button id="actionButton"
+                class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-all duration-300 transform hover:scale-105 glow-shadow">
                 Check for Clues
             </button>
         </div>
 
-        <div id="messageBox" class="fixed top-5 right-5 bg-green-500 text-white p-4 rounded-lg shadow-lg opacity-0 transition-opacity duration-500">
+        <div id="messageBox"
+            class="fixed top-5 right-5 bg-green-500 text-white p-4 rounded-lg shadow-lg opacity-0 transition-opacity duration-500">
             Message sent to the console!
         </div>
     </div>
@@ -54,9 +64,11 @@
         // --- Lab Setup ---
 
         // Flag #2 is hidden in a cookie. Can you find it in the 'Storage' or 'Application' tab?
-        // The value looks like random characters. It might be encoded. (Hint: Try Base64)
-        document.cookie = "user_session=ZmxhZ3tjMDBrMWVfTTBuc3Qzcl9oM3IzfQ==; path=/; SameSite=Lax";
-        
+        // The flag's value is set dynamically by this script. You won't find the plain text flag in the source code!
+        const encodedCookieFlag = "ZmxhZ3tjMDBrMWVfTTBuc3Qzcl9oM3IzfQ=="; // This is a Base64 encoded string.
+        const decodedCookieFlag = atob(encodedCookieFlag); // The script decodes the flag here using the atob() function.
+        document.cookie = `user_session=${decodedCookieFlag}; path=/; SameSite=Lax`; // Then it sets the cookie with the DECODED value.
+
         // This is just a decoy cookie to make things a little more interesting.
         document.cookie = "user_preference=theme:dark; path=/; SameSite=Lax";
 
@@ -65,7 +77,7 @@
         // The next two flags are constructed by JavaScript. You won't find the complete flag
         // string by just reading the code. You'll need to analyze what the script does.
 
-// 🚩 Flag #4: The Final Flag!
+        // Flag #4: The Final Flag!
         const aVerySecretVariable = "flag{j4v4scr1pt_c4n_h1d3_s3cr3ts_t00}";
 
         // --- Interactive Part ---
@@ -77,10 +89,10 @@
             // Flag #3 is revealed here.
             // We build the flag from parts so it's not visible in the source code as a single string.
             // The student must click the button and check the console to see the result.
-            const p1 = "c0ns0le";
-            const p2 = "l0gs_c4n_b3";
-            const p3 = "tr34ch3r0us";
-            console.log(`A request has been sent. Check the 'Network' tab. The request itself might fail, but its headers contain a clue. The flag is: flag{${p1}_${p2}_${p3}}`);
+            const part1 = "c0ns0le";
+            const part2 = "l0gs_c4n_b3";
+            const part3 = "tr34ch3r0us";
+            console.log(`A request has been sent. Check the 'Network' tab. The request itself might fail, but its headers contain a clue. The flag is: flag{${part1}_${part2}_${part3}}`);
 
             // Show a user-friendly message on the screen
             messageBox.style.opacity = '1';
@@ -104,4 +116,5 @@
 
     </script>
 </body>
+
 </html>
